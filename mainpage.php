@@ -20,8 +20,8 @@
         }
 
         .carousel-item {
-            height: 30rem;
-            
+            height: 35rem;
+
             background: #777;
             color: #000;
             position: relative;
@@ -51,7 +51,7 @@
             left: 0;
             right: 0;
             top: 0;
-            background-position:initial;
+            background-position: initial;
             background-size: center;
             opacity: 0.7;
         }
@@ -132,7 +132,7 @@
                             <h1>Product Name</h1>
                             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Optio, nostrum!</p>
                             <a href="productPage.php" class="btn btn-lg btn-primary">Go to Product Page</a>
-                            
+
                         </div>
 
                     </div>
@@ -142,7 +142,7 @@
                             <h1>Product Name</h1>
                             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Optio, nostrum!</p>
                             <a href="productPage.php" class="btn btn-lg btn-primary">Go to Product Page</a>
-                            
+
                         </div>
 
                     </div>
@@ -150,9 +150,34 @@
                         <div class="overlay-image" style="background-image: url(product3.jpg);"></div>
                         <div class="containerCarouselItem">
                             <h1>Product Name</h1>
-                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Optio, nostrum!</p>
+                            <p style="color: black; font-type:bold; -webkit-text-stroke: 1px white;"><?php
+                                $servername = "localhost";
+                                $username = "root";
+                                $password = "";
+                                $dbname = "e-commerce";
+
+                                // Create connection
+                                $conn = new mysqli($servername, $username, $password, $dbname);
+                                // Check connection
+                                if ($conn->connect_error) {
+                                    die("Connection failed: " . $conn->connect_error);
+                                }
+
+                                $sql = "SELECT detail FROM product";
+                                $result = $conn->query($sql);
+
+                                if ($result->num_rows > 0) {
+                                    // output data of each row
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo $row["detail"]. "<br>";
+                                    }
+                                } else {
+                                    echo "0 results";
+                                }
+                                $conn->close();
+                                ?></p>
                             <a href="productPage.php" class="btn btn-lg btn-primary">Go to Product Page</a>
-                            
+
                         </div>
 
                     </div>

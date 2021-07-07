@@ -5,7 +5,7 @@ $email_1 = "";
 $email_2 = "";
 $phoneNumber="";
 $errors = array(); 
-$db = mysqli_connect('localhost', 'root', '', 'employees',3340);
+$db = mysqli_connect('localhost', 'root', '', 'e-commerce',3340);
 
 // REGISTER USER
 if (isset($_POST['reg_user'])) {
@@ -29,8 +29,8 @@ if (isset($_POST['reg_user'])) {
   if($email_1 != $email_2) {
     array_push($errors, "These two emails do not match!");
   }
-  if(!str_contains($email_1,"@richfolks.com")){
-    array_push($errors,"You must use your @richfolks.com mail.");
+  if(!str_contains($email_1,"@")){
+    array_push($errors,"You must use your mail.");
   }
   if(!(strlen($_POST["password_1"]) == 8)){
     array_push($errors,"Password must have 8 character.");
@@ -56,8 +56,8 @@ if (isset($_POST['reg_user'])) {
   // Finally, register user if there are no errors in the form
   if (count($errors) == 0) {
   	$password = md5($password_1);//encrypt the password before saving in the database
-  	$query = "INSERT INTO users (username, email, password) 
-  			  VALUES('$username', '$email', '$password')";
+  	$query = "INSERT INTO users (username, email, password, mobilePhone) 
+  			  VALUES('$username', '$email_1', '$password', '$phoneNumber')";
   	mysqli_query($db, $query);
   	$_SESSION['username'] = $username;
   	header('location: index.php');
