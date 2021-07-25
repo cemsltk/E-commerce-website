@@ -1,6 +1,30 @@
-<?php include('server.php') ?>
+<?php
+
+session_start();
+
+require_once('CreateDb.php');
+require_once('component.php');
+
+$db = new CreateDb("cart", "producttb");
+
+if (isset($_POST['remove'])) {
+    if ($_GET['action'] == 'remove') {
+        foreach ($_SESSION['producttb'] as $key => $value) {
+            if ($value["product_id"] == $_GET['id']) {
+                echo "<h5>Cart is Empty</h5>";
+                echo "<script>alert('Product has been Removed...!')</script>";
+                echo "<script>window.location = 'cartPage.php'</script>";
+                echo "<h5>Cart is Empty</h5>";
+            }
+        }
+    }
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,64 +37,100 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <title>Cart Page</title>
 </head>
-<body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <a class="navbar-brand" href="mainpage.php">My Shop</a>
-        <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
-            aria-expanded="false" aria-label="Menu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="collapsibleNavId">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item active">
-                    <a class="nav-link" href="mainpage.php">Home<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="productPage.php">Product</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav navbar-right" style="margin-right: 40px;">
-                <li class="nav-item">
-                    <a class="nav-link" href="login.php">
-                        <span class="fa fa-sign-in mr-2"></span>Login
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="register.php">
-                        <span class="fa fa-user-plus mr-2"></span>Register
-                    </a>
-                </li>
-                <!-- if ile giriş yapıp yapmadığı kontrol edilecek eğer giriş yapmadıysa burası görünmeyecek-->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="fa fa-user mr-2"></span>Profile</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownProfile">
-                        <a class="dropdown-item" href="myAccountPage.php">My Account</a>
-                        <a class="dropdown-item" href="myAdressesPage.php">My Adresses</a>
-                        <a class="dropdown-item" href="myOrdersPage.php">My Orders</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">
-                            <span class="fa fa-sign-out"></span>Log Out</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownCart" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="fa fa-shopping-bag mr-2"></span>My Cart</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownCart">
-                        <a class="dropdown-item" href="productPage.php">Ürün 1</a>
-                        <a class="dropdown-item" href="#">Ürün 2</a>
-                        <a class="dropdown-item" href="#">Ürün 3</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="cartPage.php">
-                            <span class="fa fa-shopping-cart mr-2"></span>Go to Cart</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
 
+<body>
+    <?php
+    require_once('signedInHeader.php');
+    ?>
+
+    <div class="container-fluid">
+        <div class="row px-5">
+            <div class="col-md-7">
+                <div class="shopping-cart">
+                    <h6>My Cart</h6>
+                    <hr>
+
+                    <?php
+
+                    $total = 0;
+                    $servername = "localhost";
+                    $username = "root";
+                    $password = "";
+                    $dbname = "e-commerce";
+
+                    // Create connection
+                    $conn = new mysqli($servername, $username, $password, $dbname);
+                    // Check connection
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
+
+                    $sql = "SELECT id,product_name,product_price,product_image FROM producttb";
+
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                        // output data of each row
+                        while ($row = $result->fetch_assoc()) {
+
+                            if (isset($_SESSION['producttb'])) {
+                                $product_id = array_column($_SESSION['producttb'], 'id');
+                                cartElement($row['product_image'], $row['product_name'], $row['product_price'], $row['id']);
+                                $total = $total + $row['product_price'];
+                            } else {
+
+                                echo "<h5>Cart is Empty</h5>";
+                            }
+                        }
+                    } else {
+                        echo "0 results";
+                    }
+                    $conn->close();
+
+                    ?>
+
+                </div>
+            </div>
+            <div class="col-md-4 offset-md-1 border rounded mt-5 bg-white h-25">
+
+                <div class="pt-4">
+                    <h6>PRICE DETAILS</h6>
+                    <hr>
+                    <div class="row price-details">
+                        <div class="col-md-6">
+                            <?php
+                            if (isset($_SESSION['cart'])) {
+                                $count  = count($_SESSION['cart']);
+                                echo "<h6>Price ($count items)</h6>";
+                            } else {
+                                echo "<h6>Price (0 items)</h6>";
+                            }
+                            ?>
+                            <h6>Delivery Charges</h6>
+                            <hr>
+                            <h6>Amount Payable</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>$<?php echo $total; ?></h6>
+                            <h6 class="text-success">FREE</h6>
+                            <hr>
+                            <h6>$<?php
+                                    echo $total;
+                                    ?></h6>
+                            <br>
+                            <a href="orderPage.php" class="btn btn-success">Confirm</a>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
 </body>
+
 </html>

@@ -60,7 +60,7 @@
 
 <body>
 <?php
-    require_once('header.php');
+    require_once('signedInHeader.php');
     ?>
     <hr>
     <div class="container" style="width: 1600px; height: 400px;">
@@ -99,7 +99,7 @@
                     <div class="carousel-item">
                         <div class="overlay-image" style="background-image: url(product3.jpg);"></div>
                         <div class="containerCarouselItem">
-                        <h1>Lenco TCD-2500</h1>
+                            <h1>Lenco TCD-2500</h1>
                             <p>Lenco TCD-2500 Retro Pikap Lenco Tcd 2500</p>
                             <a href="productPage.php" class="btn btn-lg btn-primary">Go to Product Page</a>
 

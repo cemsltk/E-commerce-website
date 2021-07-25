@@ -1,4 +1,14 @@
-<?php include('server.php') ?>
+<?php
+
+session_start();
+
+require_once('CreateDb.php');
+require_once('component.php');
+
+// create instance of Createdb class
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,33 +28,39 @@
         .container {
             margin-top: 100px;
         }
-        .newarrival{
+
+        .newarrival {
             background: green;
             width: 50px;
             color: white;
             font-size: 12px;
             font-weight: bold;
         }
+
         .col-md-7 h2 {
             color: #555;
         }
-        .stars{
+
+        .stars {
             height: 15px;
         }
+
         .price {
             color: #FE980F;
             font-size: 26px;
             font-weight: bold;
             padding-top: 20px;
         }
-        input{
+
+        input {
             border: 1px solid #ccc;
             font-weight: bold;
             height: 33px;
             text-align: center;
             width: 30px;
         }
-        .cart{
+
+        .cart {
             background: #fe980f;
             color: #fff;
             font-size: 15px;
@@ -56,59 +72,9 @@
 
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <a class="navbar-brand" href="mainpage.php">My Shop</a>
-        <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId" aria-expanded="false" aria-label="Menu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="collapsibleNavId">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item active">
-                    <a class="nav-link" href="mainpage.php">Home<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="productPage">Product</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav navbar-right" style="margin-right: 40px;">
-                <li class="nav-item">
-                    <a class="nav-link" href="login.php">
-                        <span class="fa fa-sign-in mr-2"></span>Login
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="register.php">
-                        <span class="fa fa-user-plus mr-2"></span>Register
-                    </a>
-                </li>
-                <!-- if ile giriş yapıp yapmadığı kontrol edilecek eğer giriş yapmadıysa burası görünmeyecek-->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="fa fa-user mr-2"></span>Profile</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownProfile">
-                        <a class="dropdown-item" href="myAccountPage.php">My Account</a>
-                        <a class="dropdown-item" href="myAdressesPage.php">My Adresses</a>
-                        <a class="dropdown-item" href="myOrdersPage.php">My Orders</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">
-                            <span class="fa fa-sign-out"></span>Log Out</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownCart" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="fa fa-shopping-bag mr-2"></span>My Cart</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownCart">
-                        <a class="dropdown-item" href="productPage.php">Ürün 1</a>
-                        <a class="dropdown-item" href="#">Ürün 2</a>
-                        <a class="dropdown-item" href="#">Ürün 3</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="cartPage.php">
-                            <span class="fa fa-shopping-cart mr-2"></span>Go to Cart</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <?php
+    require_once('signedInHeader.php');
+    ?>
 
     <hr>
     <div class="container">
@@ -135,87 +101,154 @@
                         <span class="visually-hidden">Next</span>
                     </button>
                     <hr>
-                    
+
                 </div>
             </div>
-            
+
             <div class="col-md-7">
                 <p class="newarrival text-center">NEW</p>
                 <h2><?php
-                                $servername = "localhost";
-                                $username = "root";
-                                $password = "";
-                                $dbname = "e-commerce";
+                    $servername = "localhost";
+                    $username = "root";
+                    $password = "";
+                    $dbname = "e-commerce";
 
-                                // Create connection
-                                $conn = new mysqli($servername, $username, $password, $dbname);
-                                // Check connection
-                                if ($conn->connect_error) {
-                                    die("Connection failed: " . $conn->connect_error);
-                                }
+                    $database = new CreateDb("cart", "producttb");
+                    // Create connection
+                    $conn = new mysqli($servername, $username, $password, $dbname);
+                    // Check connection
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
 
-                                $sql = "SELECT productName FROM product";
-                                $result = $conn->query($sql);
+                    $sql = "SELECT product_name FROM producttb";
+                    $result = $conn->query($sql);
 
-                                if ($result->num_rows > 0) {
-                                    // output data of each row
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo $row["productName"]. "<br>";
-                                    }
-                                } else {
-                                    echo "0 results";
-                                }
-                                $conn->close();
-                                ?></h2>
+                    if ($result->num_rows > 0) {
+                        // output data of each row
+                        while ($row = $result->fetch_assoc()) {
+                            $productname = $row["product_name"];
+                            echo $row["product_name"] . "<br>";
+                        }
+                    } else {
+                        echo "0 results";
+                    }
+                    $conn->close();
+                    ?></h2>
                 <p>TCD-2500</p>
-                <img src="stars.png" class="stars" >
+                <img src="stars.png" class="stars">
                 <p class="price">1800 ₺</p>
                 <p><?php
-                                $servername = "localhost";
-                                $username = "root";
-                                $password = "";
-                                $dbname = "e-commerce";
+                    $servername = "localhost";
+                    $username = "root";
+                    $password = "";
+                    $dbname = "e-commerce";
 
-                                // Create connection
-                                $conn = new mysqli($servername, $username, $password, $dbname);
-                                // Check connection
-                                if ($conn->connect_error) {
-                                    die("Connection failed: " . $conn->connect_error);
-                                }
+                    // Create connection
+                    $conn = new mysqli($servername, $username, $password, $dbname);
+                    // Check connection
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
 
-                                $sql = "SELECT detail FROM product";
-                                $result = $conn->query($sql);
+                    $sql = "SELECT detail FROM product";
+                    $result = $conn->query($sql);
 
-                                if ($result->num_rows > 0) {
-                                    // output data of each row
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo $row["detail"]. "<br>";
-                                    }
-                                } else {
-                                    echo "0 results";
-                                }
-                                $conn->close();
-                                ?></p>
+                    if ($result->num_rows > 0) {
+                        // output data of each row
+                        while ($row = $result->fetch_assoc()) {
+                            echo $row["detail"] . "<br>";
+                        }
+                    } else {
+                        echo "0 results";
+                    }
+                    $conn->close();
+                    ?></p>
                 <p><b>Availability:</b> IN STOCK</p>
                 <p><b>Condition:</b> NEW</p>
                 <p><b>Brand:</b> LENCO</p>
                 <label>Quantity:</label>
                 <input type="text" value="1">
-                <button type="button" class="btn btn-default cart"> Add to Cart</button>
+
+                <button type="submit" class="btn btn-default cart" name="add" onclick="<?php
+                                                                                        $servername = "localhost";
+                                                                                        $username = "root";
+                                                                                        $password = "";
+                                                                                        $dbname = "e-commerce";
+
+                                                                                        // Create connection
+                                                                                        $conn = new mysqli($servername, $username, $password, $dbname);
+                                                                                        // Check connection
+                                                                                        if ($conn->connect_error) {
+                                                                                            die("Connection failed: " . $conn->connect_error);
+                                                                                        }
+
+                                                                                        $sql = "SELECT id FROM producttb";
+                                                                                        $result = $conn->query($sql);
+
+                                                                                        if ($result->num_rows > 0) {
+                                                                                            // output data of each row
+                                                                                            while ($row = $result->fetch_assoc()) {
+                                                                                                
+                                                                                                component($row['id']);
+                                                                                                //$count=1;
+                                                                                            }
+                                                                                        } else {
+                                                                                            echo "0 results";
+                                                                                        }
+                                                                                        $conn->close();
+                                                                                        
+
+                                                                                        if (isset($_POST['add'])) {
+
+                                                                                            if (isset($_SESSION['producttb'])) {
+
+                                                                                                $item_array_id = array_column($_SESSION['producttb'], "product_id");
+
+                                                                                                if (in_array($_POST['product_id'], $item_array_id)) {
+                                                                                                    echo "<script>alert('Product is already added in the cart..!')</script>";
+                                                                                                    echo "<script>window.location = 'productPage.php'</script>";
+                                                                                                } else {
+
+                                                                                                    $count = count($_SESSION['producttb']);
+                                                                                                    $item_array = array(
+                                                                                                        'product_id' => $_POST['product_id']
+
+                                                                                                    );
+
+                                                                                                    $_SESSION['producttb'][$count] = $item_array;
+                                                                                                }
+                                                                                            } else {
+
+                                                                                                $item_array = array(
+                                                                                                    'product_id' => $_POST['product_id']
+                                                                                                );
+
+                                                                                                // Create new session variable
+                                                                                                $_SESSION['producttb'][0] = $item_array;
+                                                                                            }
+                                                                                        }
+                                                                                        
+
+                                                                                        ?>"></button>
+
             </div>
         </div>
         <hr>
-        <div class="col-md-13">
-            <h2>Ürün Özellikleri:</h2>
-                <p>
-Temel özellikleri • Retro ahşap gramofon • İyi ses kalitesi • Hız - 33, 45 ve 78 RPM (devir / dakika) • İki tümleşik hoparlör • USB çıkışı • CD çalar ve radyo • Uzaktan kumanda Bu benzersiz Lenco TCD-2500 günümüz teknolojisi ile geçmişi bir araya getiren bir tasarımdır. 33, 45 ya da 78 devirli plakları çalabilme özelliğine sahiptir. USB çıkışı bilgisayarınıza ve diğer elektronik bağlanma imkanı sağlar. Plaklarınız kapalı kabine sığdığından, kapağı kapalıyken de çalabilirsiniz. Cihazınızı daha kolay kullanabilmek için uzaktan kumandası mevcuttur. Ölçüler: 490 × 340 × 250 mm, Ağırlık: 9.2 kg Çıktı: 2 x 4.5 watt (RMS)</p>
-            </div>
+        <div class="col-md-10" style="margin-left: 10%;">
+            <h2>Product Features:</h2>
+            <p style="text-align: center;">
+            Key features • Retro wooden gramophone • Good sound quality • Speed - 33, 45 and 78 RPM (rpm) • Two integrated speakers • USB output • CD player and radio • Remote control This unique Lenco TCD-2500 combines today's technology with the past. It is a combined design. It has the ability to play records with 33, 45 or 78 rpm. USB output allows connecting to your computer and other electronics. You can also play with the lid closed, as your records fit in the closed cabinet. It has a remote control to use your device more easily. Dimensions: 490 × 340 × 250 mm, Weight: 9.2 kg Output: 2 x 4.5 watts (RMS)</p>
+        </div>
     </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous">
+    </script>
 </body>
 
 </html>
